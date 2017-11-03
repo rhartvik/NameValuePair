@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import '../styles/App.css';
+import KeyValuePairEntry from '../components/KeyValuePairEntry';
 import KeyValuePair from '../components/KeyValuePair';
+import KeyValuePairEmpty from '../components/KeyValuePairEmpty';
+
+var minRows = 16;
 
 class App extends Component {
 
   state = {
-    newKVPs: [],
+    newKVPs: [""],
     selectedNewKVP: 0,
     kvps: [],
     selectedKVP: 0
@@ -57,15 +61,42 @@ class App extends Component {
     });
   };
 
+  clearAll = () => {
+    this.setState((prevState, props) => {
+      return { 
+        newKVPs: [""],
+        selectedNewKVP: 0,
+        kvps: [],
+        selectedKVP: 0
+      };
+    });
+  };
+
   render() {
     return (
       <div className="app">
         <div id="input-column" className="column">
+          {this.state.newKVPs.map((kvp, index) => {
+            return (
+            <KeyValuePairEntry key={"newKVP" + index}
+              index={index}
+              selected={this.state.selectedNewKVP === index}
+              select={this.updateSelectedNewKVP.bind(this, index)} />
+          )}
+          )}
+          {
+            Array(Math.max(0,minRows - this.state.newKVPs.length))
+              .fill()
+              .map((e,i)=>i+this.state.kvps.length)
+              .map((x, i) =>
+            <KeyValuePairEmpty key={i} />
+          )
+          }
         </div>
         <div id="buttons-column" className="column">
           <button type="button" onClick={this.addNewKVP}>Add</button>
           <button type="button" onClick={this.removeOne}>Remove Selected</button>
-          <button type="button">Clear</button>
+          <button type="button" onClick={this.clearAll}>Clear</button>
           <button type="button">Export to JSON</button>
           <button type="button">Sort by Name</button>
           <button type="button">Sort by Value</button>
@@ -84,6 +115,14 @@ class App extends Component {
               select={this.updateSelectedKVP.bind(this, index)} />
           )}
           )}
+          {
+            Array(Math.max(0,minRows - this.state.kvps.length))
+              .fill()
+              .map((e,i)=>i+this.state.kvps.length)
+              .map((x, i) =>
+            <KeyValuePairEmpty key={i} />
+          )
+          }
         </div>
       </div>
     );
