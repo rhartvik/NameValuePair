@@ -46,6 +46,16 @@ class App extends Component {
     }
   }
 
+  removeOne = () => {
+    var updatedKVPs = this.state.kvps.slice();
+    updatedKVPs.splice(this.state.selectedKVP, 1);
+    this.setState((prevState, props) => {
+      return {
+        kvps: updatedKVPs,
+        selectedKVP: 0
+      };
+    });
+  };
 
   render() {
     return (
@@ -54,7 +64,7 @@ class App extends Component {
         </div>
         <div id="buttons-column" className="column">
           <button type="button" onClick={this.addNewKVP}>Add</button>
-          <button type="button">Remove Selected</button>
+          <button type="button" onClick={this.removeOne}>Remove Selected</button>
           <button type="button">Clear</button>
           <button type="button">Export to JSON</button>
           <button type="button">Sort by Name</button>
