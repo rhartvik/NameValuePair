@@ -20,7 +20,9 @@ class KeyValuePair extends Component {
 
 KeyValuePair.propTypes = {
   dictKey: PropTypes.string.isRequired,
-  dictValue: PropTypes.string.isRequired
+  dictValue: PropTypes.string.isRequired,
+  select: PropTypes.func.isRequired,
+  selected: PropTypes.bool
 }
 
 export default KeyValuePair

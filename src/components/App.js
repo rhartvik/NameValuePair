@@ -23,6 +23,29 @@ class App extends Component {
     });
   };
 
+  addNewKVP = () => {
+    var newKVP = document.getElementById("newKVPInput" + this.state.selectedNewKVP).value;
+    var kvpFormat = /^(<[\w\d]+>) *= *(<[\w\d]+>)$/;
+    var validKVP = kvpFormat.test(newKVP);
+    if (validKVP) {
+      var spacesRemoved = newKVP.replace(kvpFormat, '$1=$2');
+      var updatedKVPs = this.state.kvps.slice();
+      updatedKVPs.push(spacesRemoved);
+
+      var updatedNewKVPs = this.state.newKVPs.slice();
+      updatedNewKVPs[this.state.selectedNewKVP] = "";
+
+      this.setState((prevState, props) => {
+        return { 
+          newKVPs: updatedNewKVPs,
+          kvps: updatedKVPs
+        };
+      });
+    } else {
+      window.alert("Key-value pairs must be entered in the format \"<key>=<value>\"");
+    }
+  }
+
 
   render() {
     return (
@@ -30,7 +53,7 @@ class App extends Component {
         <div id="input-column" className="column">
         </div>
         <div id="buttons-column" className="column">
-          <button type="button">Add</button>
+          <button type="button" onClick={this.addNewKVP}>Add</button>
           <button type="button">Remove Selected</button>
           <button type="button">Clear</button>
           <button type="button">Export to JSON</button>
