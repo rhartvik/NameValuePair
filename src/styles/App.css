@@ -1,12 +1,17 @@
 .app {
+  padding-top: 15px;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
 }
 
 .column {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  min-width: 200px
+}
+
+#buttons-column {
+  justify-content: space-between;
 }
 
 button {
