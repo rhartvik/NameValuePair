@@ -72,6 +72,29 @@ class App extends Component {
     });
   };
 
+  sortKeys = () => {
+    var updatedKVPs = this.state.kvps.slice().sort();
+    this.setState((prevState, props) => {
+      return { 
+        kvps: updatedKVPs,
+        selectedKVP: 0
+      };
+    });
+  }
+  
+  sortValues = () => {
+    var updatedKVPs = this.state.kvps.slice().map((kvp) => { return kvp.replace(kvpFormat, '$2=$1') });
+    updatedKVPs.sort();
+    updatedKVPs = updatedKVPs.map((kvp) => { return kvp.replace(kvpFormat, '$2=$1') });
+
+    this.setState((prevState, props) => {
+      return { 
+        kvps: updatedKVPs,
+        selectedKVP: 0
+      };
+    });
+  }
+
   render() {
     return (
       <div className="app">
@@ -98,8 +121,8 @@ class App extends Component {
           <button type="button" onClick={this.removeOne}>Remove Selected</button>
           <button type="button" onClick={this.clearAll}>Clear</button>
           <button type="button">Export to JSON</button>
-          <button type="button">Sort by Name</button>
-          <button type="button">Sort by Value</button>
+          <button type="button" onClick={this.sortKeys}>Sort by Name</button>
+          <button type="button" onClick={this.sortValues}>Sort by Value</button>
         </div>
         <div id="dictionary-column" className="column">
           {this.state.kvps.map((kvp, index) => {
