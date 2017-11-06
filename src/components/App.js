@@ -115,6 +115,7 @@ class App extends Component {
   render() {
     return (
       <div className="app">
+
         <div id="input-column" className="column">
           <div className="dictionary-entry">
             <form>
@@ -127,6 +128,7 @@ class App extends Component {
           </div>
           <KeyValuePairEmptyList count={Math.max(minRows - 1, this.state.kvps.length - 1)} />
         </div>
+
         <div id="buttons-column" className="column">
           <button type="button" onClick={this.addNewKVP}>Add</button>
           <button type="button" onClick={this.removeOne}>Remove Selected</button>
@@ -135,6 +137,7 @@ class App extends Component {
           <button type="button" onClick={this.sortKeys}>Sort by Name</button>
           <button type="button" onClick={this.sortValues}>Sort by Value</button>
         </div>
+
         <div id="dictionary-column" className="column">
           {this.state.kvps.map((kvp, index) => {
             let endOfKey = kvp.indexOf(">=<");
@@ -151,6 +154,7 @@ class App extends Component {
           )}
           <KeyValuePairEmptyList count={Math.max(0,minRows - this.state.kvps.length)} />
         </div>
+        
       </div>
     );
   }
