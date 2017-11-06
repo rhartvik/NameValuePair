@@ -116,7 +116,7 @@ class App extends Component {
     return (
       <div className="app">
         <div id="input-column" className="column">
-        <div className="dictionary-entry selected">
+        <div className="dictionary-entry">
           <form>
             <label htmlFor="kvp-input" className="hidden">
               Enter a new label in the form "&lt;key&gt;=&lt;value&gt;"
