@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../styles/App.css';
 import KeyValuePair from '../components/KeyValuePair';
-import KeyValuePairEmpty from '../components/KeyValuePairEmpty';
+import KeyValuePairEmptyList from '../components/KeyValuePairEmptyList';
 
 var minRows = 16;
 var kvpFormat = /^<([\w\d]+)> *= *<([\w\d]+)>$/;
@@ -116,18 +116,16 @@ class App extends Component {
     return (
       <div className="app">
         <div id="input-column" className="column">
-        <div className="dictionary-entry">
-          <form>
-            <label htmlFor="kvp-input" className="hidden">
-              Enter a new label in the form "&lt;key&gt;=&lt;value&gt;"
-            </label>
-            <input id="kvp-input" type="text"
-              onChange={this.handleKVPInput.bind(this)}/>
-          </form>
-        </div>
-          {Array(minRows - 1).fill().map((x, i) =>
-            <KeyValuePairEmpty key={i} />
-          )}
+          <div className="dictionary-entry">
+            <form>
+              <label htmlFor="kvp-input" className="hidden">
+                Enter a new name-value pair in the form "&lt;name&gt;=&lt;value&gt;"
+              </label>
+              <input id="kvp-input" type="text"
+                onChange={this.handleKVPInput.bind(this)}/>
+            </form>
+          </div>
+          <KeyValuePairEmptyList count={Math.max(minRows - 1, this.state.kvps.length - 1)} />
         </div>
         <div id="buttons-column" className="column">
           <button type="button" onClick={this.addNewKVP}>Add</button>
@@ -145,20 +143,13 @@ class App extends Component {
             let key = kvp.substring(1,endOfKey);
             let value = kvp.substring(beginValue,endOfValue);
             return (
-            <KeyValuePair key={"kvp" + index} 
-              dictKey={key} dictValue={value}
-              selected={this.state.selectedKVP === index}
-              select={this.updateSelectedKVP.bind(this, index)} />
+              <KeyValuePair key={"kvp" + index} 
+                dictKey={key} dictValue={value}
+                selected={this.state.selectedKVP === index}
+                select={this.updateSelectedKVP.bind(this, index)} />
+            )}
           )}
-          )}
-          {
-            Array(Math.max(0,minRows - this.state.kvps.length))
-              .fill()
-              .map((e,i)=>i+this.state.kvps.length)
-              .map((x, i) =>
-            <KeyValuePairEmpty key={i} />
-          )
-          }
+          <KeyValuePairEmptyList count={Math.max(0,minRows - this.state.kvps.length)} />
         </div>
       </div>
     );
