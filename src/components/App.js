@@ -1,18 +1,25 @@
 import React, { Component } from 'react';
 import '../styles/App.css';
-import KeyValuePairEntry from '../components/KeyValuePairEntry';
 import KeyValuePair from '../components/KeyValuePair';
 import KeyValuePairEmpty from '../components/KeyValuePairEmpty';
 
 var minRows = 16;
+var kvpFormat = /^<([\w\d]+)> *= *<([\w\d]+)>$/;
+
 
 class App extends Component {
 
   state = {
-    newKVPs: [""],
-    selectedNewKVP: 0,
+    kvpInput: "",
     kvps: [],
     selectedKVP: 0
+  }
+
+  handleKVPInput = (e) => {
+    var newKVPInput = e.target.value;
+    this.setState((prevState, props) => {
+      return { kvpInput: newKVPInput};
+    });
   }
 
   updateSelectedKVP = (kvpIndex) => {
@@ -21,27 +28,18 @@ class App extends Component {
     });
   };
 
-  updateSelectedNewKVP = (kvpIndex) => {
-    this.setState((prevState, props) => {
-      return { selectedNewKVP: kvpIndex};
-    });
-  };
-
   addNewKVP = () => {
-    var newKVP = document.getElementById("newKVPInput" + this.state.selectedNewKVP).value;
-    var kvpFormat = /^(<[\w\d]+>) *= *(<[\w\d]+>)$/;
-    var validKVP = kvpFormat.test(newKVP);
+    let newKVP = this.state.kvpInput;
+    let validKVP = kvpFormat.test(newKVP);
     if (validKVP) {
-      var spacesRemoved = newKVP.replace(kvpFormat, '$1=$2');
-      var updatedKVPs = this.state.kvps.slice();
+      let spacesRemoved = newKVP.replace(kvpFormat, '<$1>=<$2>');
+      let updatedKVPs = this.state.kvps.slice();
       updatedKVPs.push(spacesRemoved);
 
-      var updatedNewKVPs = this.state.newKVPs.slice();
-      updatedNewKVPs[this.state.selectedNewKVP] = "";
-
+      document.getElementById("kvp-input").value = "";
       this.setState((prevState, props) => {
         return { 
-          newKVPs: updatedNewKVPs,
+          kvpInput: "",
           kvps: updatedKVPs
         };
       });
@@ -51,7 +49,7 @@ class App extends Component {
   }
 
   removeOne = () => {
-    var updatedKVPs = this.state.kvps.slice();
+    let updatedKVPs = this.state.kvps.slice();
     updatedKVPs.splice(this.state.selectedKVP, 1);
     this.setState((prevState, props) => {
       return {
@@ -62,10 +60,10 @@ class App extends Component {
   };
 
   clearAll = () => {
-    this.setState((prevState, props) => {
+      document.getElementById("kvp-input").value = "";
+      this.setState((prevState, props) => {
       return { 
-        newKVPs: [""],
-        selectedNewKVP: 0,
+        kvpInput: "",
         kvps: [],
         selectedKVP: 0
       };
@@ -73,7 +71,7 @@ class App extends Component {
   };
 
   sortKeys = () => {
-    var updatedKVPs = this.state.kvps.slice().sort();
+    let updatedKVPs = this.state.kvps.slice().sort();
     this.setState((prevState, props) => {
       return { 
         kvps: updatedKVPs,
@@ -81,11 +79,11 @@ class App extends Component {
       };
     });
   }
-  
+
   sortValues = () => {
-    var updatedKVPs = this.state.kvps.slice().map((kvp) => { return kvp.replace(kvpFormat, '$2=$1') });
+    let updatedKVPs = this.state.kvps.slice().map((kvp) => { return kvp.replace(kvpFormat, '<$2>=<$1>') });
     updatedKVPs.sort();
-    updatedKVPs = updatedKVPs.map((kvp) => { return kvp.replace(kvpFormat, '$2=$1') });
+    updatedKVPs = updatedKVPs.map((kvp) => { return kvp.replace(kvpFormat, '<$2>=<$1>') });
 
     this.setState((prevState, props) => {
       return { 
@@ -93,44 +91,59 @@ class App extends Component {
         selectedKVP: 0
       };
     });
+  }
+
+  exportToXml = () => {
+    let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<NameValuePairs>';
+    this.state.kvps.forEach((kvp) => {
+      let kvpXML = kvp.replace(kvpFormat, `
+  <NameValuePair>
+    <key>
+      $1
+    </key>
+    <value>
+      $2
+    <value>
+  </NameValuePair>`);
+      xmlContent += kvpXML;
+    }); 
+    xmlContent += "\n</NameValuePairs>";
+    var uriContent = "data:application/octet-stream," + encodeURIComponent(xmlContent);
+    window.open(uriContent, 'name_values.xml');
   }
 
   render() {
     return (
       <div className="app">
         <div id="input-column" className="column">
-          {this.state.newKVPs.map((kvp, index) => {
-            return (
-            <KeyValuePairEntry key={"newKVP" + index}
-              index={index}
-              selected={this.state.selectedNewKVP === index}
-              select={this.updateSelectedNewKVP.bind(this, index)} />
-          )}
-          )}
-          {
-            Array(Math.max(0,minRows - this.state.newKVPs.length))
-              .fill()
-              .map((e,i)=>i+this.state.kvps.length)
-              .map((x, i) =>
+        <div className="dictionary-entry selected">
+          <form>
+            <label htmlFor="kvp-input" className="hidden">
+              Enter a new label in the form "&lt;key&gt;=&lt;value&gt;"
+            </label>
+            <input id="kvp-input" type="text"
+              onChange={this.handleKVPInput.bind(this)}/>
+          </form>
+        </div>
+          {Array(minRows - 1).fill().map((x, i) =>
             <KeyValuePairEmpty key={i} />
-          )
-          }
+          )}
         </div>
         <div id="buttons-column" className="column">
           <button type="button" onClick={this.addNewKVP}>Add</button>
           <button type="button" onClick={this.removeOne}>Remove Selected</button>
           <button type="button" onClick={this.clearAll}>Clear</button>
-          <button type="button">Export to JSON</button>
+          <button type="button" onClick={this.exportToXml}>Export to XML</button>
           <button type="button" onClick={this.sortKeys}>Sort by Name</button>
           <button type="button" onClick={this.sortValues}>Sort by Value</button>
         </div>
         <div id="dictionary-column" className="column">
           {this.state.kvps.map((kvp, index) => {
-            var endOfKey = kvp.indexOf(">=<");
-            var beginValue = endOfKey + 3;
-            var endOfValue = kvp.indexOf(">", beginValue);
-            var key = kvp.substring(1,endOfKey);
-            var value = kvp.substring(beginValue,endOfValue);
+            let endOfKey = kvp.indexOf(">=<");
+            let beginValue = endOfKey + 3;
+            let endOfValue = kvp.indexOf(">", beginValue);
+            let key = kvp.substring(1,endOfKey);
+            let value = kvp.substring(beginValue,endOfValue);
             return (
             <KeyValuePair key={"kvp" + index} 
               dictKey={key} dictValue={value}
