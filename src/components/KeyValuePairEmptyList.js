@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
-import KeyValuePairEmpty from '../components/KeyValuePairEmpty';
+
+const KeyValuePairEmpty = () => (
+  <div className="dictionary-entry empty">
+    <input disabled></input>
+  </div>
+)
 
 class KeyValuePairEmptyList extends Component {
 
