@@ -44,7 +44,7 @@ class App extends Component {
         };
       });
     } else {
-      window.alert("Key-value pairs must be entered in the format \"<key>=<value>\"");
+      window.alert("Name-value pairs must be entered in the format \"<name>=<value>\" and must contain only letters and numbers.");
     }
   }
 
