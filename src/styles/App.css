@@ -39,12 +39,17 @@ button {
   border-width: 1px;
   font-size: 12px;
   border-color: #E6E6E6;
+  height: 17px;  
 }
 
 .dictionary-entry p {
-  margin: 2px;
-  width: 100%;
+  margin: 1px;
   height: 100%;
+  width: 100%;
+}
+
+.dictionary-entry .selected {
+  background-color: #347FFE;
 }
 
 .dictionary-entry input:focus {
@@ -66,8 +71,4 @@ button {
   width:1px;
   height:1px;
   overflow:hidden;
-}
-
-.selected {
-  background-color: #347FFE;
 }
